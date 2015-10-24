@@ -1,0 +1,13 @@
+language: scala
+scala: 2.11.7
+script: sbt ++$TRAVIS_SCALA_VERSION standaloneJar
+deploy:
+  provider: releases
+  api_key:
+    secure: Orcpre9MFX5jGelRtDhccqNEt+Dbq/ETV4zdmKXkxQOV0QrcNVqF+t8Fag+1Ih04fSeVEcJGXX8I4skPL63tiDOn1Zzyvq6qG/euNAwetP3NhjNSwZTCqL59w0CnPCA1R1pyMfh/w2kAx8Lf15kHnDiQ34PCFfrVFcCYYcy5TpXPjzvHyCjYwvF0Y3dQtWcFFTLMe3SUWYvDXry+al8qQNjHqC+lBK7r0p0e4BtwGh6yDnO+Y1bnR+45YhGB/X5QdBWL1cS2E+QilIy1QzOuVOtF/XpqdV39HjS6nsmOsMl4XhY9IkE+D+nuO3NUiELjOPcrpKQrJjseaEMwDxqoaxoiPrnMif6uIIrre82LHB6GgQKUadGNrdnU1YnxBKfJiMvO1Sq5Ha3Sk93LJwWJCQy1g+wnEN2kxjRFglXHfhEwPHbmnk3cjRAZJDqXPEi84+xL6a7GDFFStpxcnm3WRaWyghUOdSGoYqQV04jk2MsrjeffSgPxNwfzHiBsJTT92sNe80CkYvAGpozBUc4mvzHp4yc/pGVanrfZ7z8mpovHaeFZTu4sGLRgEOI86h/kfyVMxVwqTFJXGpMfnKJwU226M2sCkL7iZ7l6k+SnbhV3H+HdvRX4085kug96DqaVlRZnijHe3sj++/4U3kGEb7xMBCIlo6KdhBdB4r50Mu4=
+  file: target/leveldb-gui-client-0.1-standalone.jar
+  skip_cleanup: true
+  on:
+    repo: mohamedkomalo/leveldb-gui-client
+    tags: true
+    all_branches: true
