@@ -14,6 +14,8 @@ public class GeneratedMainWindow extends JFrame {
     protected JTable dbTable;
     protected JPanel header;
     protected JPanel body;
+    private JPanel panel;
+    protected JButton addRowButton;
 
     public GeneratedMainWindow() {
         setTitle("Leveldb GUI Client");
@@ -42,6 +44,14 @@ public class GeneratedMainWindow extends JFrame {
         body.setLayout(new BorderLayout(0, 0));
         content.add(body, BorderLayout.CENTER);
         body.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), null));
+
+        panel = new JPanel();
+        FlowLayout flowLayout = (FlowLayout) panel.getLayout();
+        flowLayout.setAlignment(FlowLayout.LEFT);
+        body.add(panel, BorderLayout.NORTH);
+
+        addRowButton = new JButton("Add");
+        panel.add(addRowButton);
         JScrollPane scrollPane1 = new JScrollPane();
         body.add(scrollPane1, BorderLayout.CENTER);
         dbTable = new JTable();

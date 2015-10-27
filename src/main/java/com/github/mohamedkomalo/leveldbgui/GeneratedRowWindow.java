@@ -7,13 +7,15 @@ import java.awt.*;
 /**
  * Created by Mohamed Kamal on 10/26/2015.
  */
-public class GeneratedRowWindow extends JFrame {
+public class GeneratedRowWindow extends JDialog {
 	protected JTextArea valueTextArea;
 	protected JTextArea keyTextArea;
-	
-	public GeneratedRowWindow() {
-		super();
-		
+	protected JButton okButton;
+	protected JButton cancelButton;
+
+	public GeneratedRowWindow(JFrame owner) {
+		super(owner, true);
+
 		setBounds(100, 100, 566, 414);
 		getContentPane().setLayout(new BorderLayout());
 		{
@@ -21,13 +23,13 @@ public class GeneratedRowWindow extends JFrame {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("OK");
+				okButton = new JButton("OK");
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 			}
 			{
-				JButton cancelButton = new JButton("Cancel");
+				cancelButton = new JButton("Cancel");
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}

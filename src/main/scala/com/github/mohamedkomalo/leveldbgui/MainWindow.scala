@@ -7,6 +7,9 @@ import javax.swing.{JFileChooser, SwingUtilities, UIManager}
 import javax.xml.bind.DatatypeConverter
 
 import com.github.mohamedkomalo.util.LevelDbLoader
+import com.github.mohamedkomalo.util.ManagedResource._
+import org.fusesource.leveldbjni.JniDBFactory._
+import org.iq80.leveldb.Options
 
 
 /**
@@ -74,17 +77,53 @@ class MainWindow extends GeneratedMainWindow {
       if(e.getClickCount == 2) {
         val selectedRow = dbTable.rowAtPoint(e.getPoint)
         val keyValue = keyValues(selectedRow)
-        new RowWindow(keyValue._1, keyValue._2).setVisible(true)
+        val rowWindow = new RowWindow(keyValue._1, keyValue._2)
+        rowWindow.setVisible(true)
+        if(rowWindow.approved){
+          using(factory.open(new File(dbPathField.getText()), new Options())) { db =>
+            db.put(rowWindow.key.getBytes("UTF-8"), rowWindow.value.getBytes("UTF-8"))
+          }
+          reloadDB(dbPathField.getText())
+        }
       }
     }
     override def mouseReleased(e: MouseEvent): Unit = {}
   })
-}
 
-class RowWindow(keyBytes: Array[Byte], valueBytes: Array[Byte]) extends GeneratedRowWindow {
-  val key = new String(keyBytes, "UTF-8")
-  val value = new String(valueBytes, "UTF-8")
+  addRowButton.addActionListener(new ActionListener {
+    override def actionPerformed(e: ActionEvent): Unit = {
+      val rowWindow = new RowWindow()
+      rowWindow.setVisible(true)
+      if(rowWindow.approved){
+        using(factory.open(new File(dbPathField.getText()), new Options())) { db =>
+          db.put(rowWindow.key.getBytes("UTF-8"), rowWindow.value.getBytes("UTF-8"))
+        }
+        reloadDB(dbPathField.getText())
+      }
+    }
+  })
 
-  keyTextArea.setText(key)
-  valueTextArea.setText(value)
+  class RowWindow(keyBytes: Array[Byte] = Array(), valueBytes: Array[Byte] = Array()) extends GeneratedRowWindow(MainWindow.this) {
+    var approved = false
+
+    keyTextArea.setText(new String(keyBytes, "UTF-8"))
+    valueTextArea.setText(new String(valueBytes, "UTF-8"))
+
+    def key = keyTextArea.getText
+    def value = valueTextArea.getText
+
+    okButton.addActionListener(new ActionListener {
+      override def actionPerformed(e: ActionEvent): Unit = {
+        approved = true
+        setVisible(false)
+      }
+    })
+
+    cancelButton.addActionListener(new ActionListener {
+      override def actionPerformed(e: ActionEvent): Unit = {
+        approved = false
+        setVisible(false)
+      }
+    })
+  }
 }
