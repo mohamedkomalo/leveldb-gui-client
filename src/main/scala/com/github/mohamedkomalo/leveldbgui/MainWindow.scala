@@ -1,6 +1,6 @@
 package com.github.mohamedkomalo.leveldbgui
 
-import java.awt.event.{ActionEvent, ActionListener}
+import java.awt.event.{ActionEvent, ActionListener, MouseEvent, MouseListener}
 import java.io.File
 import javax.swing.table.AbstractTableModel
 import javax.swing.{JFileChooser, SwingUtilities, UIManager}
@@ -24,6 +24,8 @@ object MainWindow extends App {
 }
 
 class MainWindow extends GeneratedMainWindow {
+  var keyValues = Seq.empty[(Array[Byte], Array[Byte])]
+
   browseButton.addActionListener(new ActionListener {
     override def actionPerformed(e: ActionEvent): Unit = {
       val fileChooser = new JFileChooser()
@@ -40,24 +42,49 @@ class MainWindow extends GeneratedMainWindow {
     }
   })
 
+  dbTable.setModel(new AbstractTableModel() {
+    val columnNames = Array("Key", "Value")
+
+    override def getColumnName(column: Int) = columnNames(column)
+
+    override def getColumnCount = columnNames.length
+
+    override def isCellEditable(rowIndex: Int, columnIndex: Int) = false
+
+    override def getRowCount: Int = keyValues.size
+
+    override def getValueAt(rowIndex: Int, columnIndex: Int): AnyRef = columnIndex match {
+      case 0 => DatatypeConverter.printHexBinary(keyValues(rowIndex)._1)
+      case 1 => new String(keyValues(rowIndex)._2, "UTF-8")
+    }
+  })
+
   def reloadDB(dbPath: String) = {
     dbPathField.setText(dbPath)
+    keyValues = new LevelDbLoader(dbPath).load
+    dbTable.revalidate()
+    dbTable.repaint()
+  }
 
-    val newKeyValues = new LevelDbLoader(dbPath).load
-
-    val model = new AbstractTableModel() {
-      val columnNames = Array("Key", "Value")
-      override def getColumnName(column: Int) = columnNames(column)
-      override def getColumnCount = columnNames.length
-      override def isCellEditable(rowIndex: Int, columnIndex: Int) = false
-
-      override def getRowCount: Int = newKeyValues.size
-      override def getValueAt(rowIndex: Int, columnIndex: Int): AnyRef = columnIndex match {
-        case 0 => DatatypeConverter.printHexBinary(newKeyValues(rowIndex)._1)
-        case 1 => new String(newKeyValues(rowIndex)._2, "UTF-8")
+  dbTable.addMouseListener(new MouseListener {
+    override def mouseExited(e: MouseEvent): Unit = {}
+    override def mouseClicked(e: MouseEvent): Unit = {}
+    override def mouseEntered(e: MouseEvent): Unit = {}
+    override def mousePressed(e: MouseEvent): Unit = {
+      if(e.getClickCount == 2) {
+        val selectedRow = dbTable.rowAtPoint(e.getPoint)
+        val keyValue = keyValues(selectedRow)
+        new RowWindow(keyValue._1, keyValue._2).setVisible(true)
       }
     }
+    override def mouseReleased(e: MouseEvent): Unit = {}
+  })
+}
 
-    dbTable.setModel(model)
-  }
+class RowWindow(keyBytes: Array[Byte], valueBytes: Array[Byte]) extends GeneratedRowWindow {
+  val key = new String(keyBytes, "UTF-8")
+  val value = new String(valueBytes, "UTF-8")
+
+  keyTextArea.setText(key)
+  valueTextArea.setText(value)
 }
