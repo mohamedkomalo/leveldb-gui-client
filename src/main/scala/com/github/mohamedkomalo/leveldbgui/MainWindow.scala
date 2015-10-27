@@ -6,11 +6,11 @@ import javax.swing.table.AbstractTableModel
 import javax.swing.{JFileChooser, SwingUtilities, UIManager}
 import javax.xml.bind.DatatypeConverter
 
-import com.github.mohamedkomalo.util.LevelDbLoader
 import com.github.mohamedkomalo.util.ManagedResource._
 import org.fusesource.leveldbjni.JniDBFactory._
-import org.iq80.leveldb.Options
+import org.iq80.leveldb.{DB, Options}
 
+import scala.collection.JavaConversions._
 
 /**
  * Created by Mohamed Kamal on 10/23/2015.
@@ -28,6 +28,7 @@ object MainWindow extends App {
 
 class MainWindow extends GeneratedMainWindow {
   var keyValues = Seq.empty[(Array[Byte], Array[Byte])]
+  var db: Option[DB] = None
 
   val STRING = "String (UTF-8)"
   val HEX = "Hex"
@@ -103,9 +104,27 @@ class MainWindow extends GeneratedMainWindow {
   })
 
   def reloadDB(dbPath: String) = {
+    db.foreach(_.close())
+    db = Option(factory.open(new File(dbPath), new Options()))
+
     dbPathField.setText(dbPath)
-    keyValues = new LevelDbLoader(dbPath).load
+    keyValues = loadAll
     updateTable
+  }
+
+  def loadAll = {
+    var list = Seq.empty[(Array[Byte], Array[Byte])]
+    db.foreach { db =>
+      using(db.iterator()) { iterator =>
+        iterator.seekToFirst()
+        iterator foreach { case entry =>
+          val key = entry.getKey
+          val value = entry.getValue
+          list = list :+ (key -> value)
+        }
+      }
+    }
+    list
   }
 
   dbTable.addMouseListener(new MouseListener {
@@ -119,7 +138,7 @@ class MainWindow extends GeneratedMainWindow {
         val rowWindow = new RowWindow(keyValue._1, keyValue._2)
         rowWindow.setVisible(true)
         if(rowWindow.approved){
-          using(factory.open(new File(dbPathField.getText()), new Options())) { db =>
+          db foreach { db =>
             db.put(keyCodec.encode(rowWindow.key), valueCodec.encode(rowWindow.value))
           }
           reloadDB(dbPathField.getText())
@@ -134,7 +153,7 @@ class MainWindow extends GeneratedMainWindow {
       val rowWindow = new RowWindow()
       rowWindow.setVisible(true)
       if(rowWindow.approved){
-        using(factory.open(new File(dbPathField.getText()), new Options())) { db =>
+        db foreach { db =>
           db.put(keyCodec.encode(rowWindow.key), valueCodec.encode(rowWindow.value))
         }
         reloadDB(dbPathField.getText())
