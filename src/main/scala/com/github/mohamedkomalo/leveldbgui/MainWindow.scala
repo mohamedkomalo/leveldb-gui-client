@@ -1,6 +1,6 @@
 package com.github.mohamedkomalo.leveldbgui
 
-import java.awt.event.{ActionEvent, ActionListener, MouseEvent, MouseListener}
+import java.awt.event._
 import java.io.File
 import javax.swing.table.AbstractTableModel
 import javax.swing.{JFileChooser, SwingUtilities, UIManager}
@@ -28,6 +28,46 @@ object MainWindow extends App {
 
 class MainWindow extends GeneratedMainWindow {
   var keyValues = Seq.empty[(Array[Byte], Array[Byte])]
+
+  val STRING = "String (UTF-8)"
+  val HEX = "Hex"
+
+  keyEncodingBox.addItem(STRING)
+  keyEncodingBox.addItem(HEX)
+
+  valueEncodingBox.addItem(STRING)
+  valueEncodingBox.addItem(HEX)
+
+  private val listener = new ItemListener {
+    override def itemStateChanged(e: ItemEvent): Unit = updateTable
+  }
+
+  keyEncodingBox.addItemListener(listener)
+  valueEncodingBox.addItemListener(listener)
+
+  def updateTable: Unit = {
+    dbTable.revalidate()
+    dbTable.repaint()
+  }
+
+  case class Codec(encoding: String) {
+    def decode(value: Array[Byte]): String = encoding match {
+      case STRING => new String(value)
+      case HEX => DatatypeConverter.printHexBinary(value)
+    }
+
+    def encode(value: String): Array[Byte] = encoding match {
+      case STRING => bytes(value)
+      case HEX => DatatypeConverter.parseHexBinary(value)
+    }
+  }
+
+  def keyCodec: Codec = Codec(keyEncodingBox.getSelectedItem.asInstanceOf[String])
+  def valueCodec: Codec = Codec(valueEncodingBox.getSelectedItem.asInstanceOf[String])
+
+  def keyEncoding: String = {
+    keyEncodingBox.getSelectedItem.asInstanceOf[String]
+  }
 
   browseButton.addActionListener(new ActionListener {
     override def actionPerformed(e: ActionEvent): Unit = {
@@ -57,16 +97,15 @@ class MainWindow extends GeneratedMainWindow {
     override def getRowCount: Int = keyValues.size
 
     override def getValueAt(rowIndex: Int, columnIndex: Int): AnyRef = columnIndex match {
-      case 0 => DatatypeConverter.printHexBinary(keyValues(rowIndex)._1)
-      case 1 => new String(keyValues(rowIndex)._2, "UTF-8")
+      case 0 => keyCodec.decode(keyValues(rowIndex)._1)
+      case 1 => valueCodec.decode(keyValues(rowIndex)._2)
     }
   })
 
   def reloadDB(dbPath: String) = {
     dbPathField.setText(dbPath)
     keyValues = new LevelDbLoader(dbPath).load
-    dbTable.revalidate()
-    dbTable.repaint()
+    updateTable
   }
 
   dbTable.addMouseListener(new MouseListener {
@@ -81,7 +120,7 @@ class MainWindow extends GeneratedMainWindow {
         rowWindow.setVisible(true)
         if(rowWindow.approved){
           using(factory.open(new File(dbPathField.getText()), new Options())) { db =>
-            db.put(rowWindow.key.getBytes("UTF-8"), rowWindow.value.getBytes("UTF-8"))
+            db.put(keyCodec.encode(rowWindow.key), valueCodec.encode(rowWindow.value))
           }
           reloadDB(dbPathField.getText())
         }
@@ -96,7 +135,7 @@ class MainWindow extends GeneratedMainWindow {
       rowWindow.setVisible(true)
       if(rowWindow.approved){
         using(factory.open(new File(dbPathField.getText()), new Options())) { db =>
-          db.put(rowWindow.key.getBytes("UTF-8"), rowWindow.value.getBytes("UTF-8"))
+          db.put(keyCodec.encode(rowWindow.key), valueCodec.encode(rowWindow.value))
         }
         reloadDB(dbPathField.getText())
       }
@@ -106,8 +145,8 @@ class MainWindow extends GeneratedMainWindow {
   class RowWindow(keyBytes: Array[Byte] = Array(), valueBytes: Array[Byte] = Array()) extends GeneratedRowWindow(MainWindow.this) {
     var approved = false
 
-    keyTextArea.setText(new String(keyBytes, "UTF-8"))
-    valueTextArea.setText(new String(valueBytes, "UTF-8"))
+    keyTextArea.setText(keyCodec.decode(keyBytes))
+    valueTextArea.setText(valueCodec.decode(valueBytes))
 
     def key = keyTextArea.getText
     def value = valueTextArea.getText

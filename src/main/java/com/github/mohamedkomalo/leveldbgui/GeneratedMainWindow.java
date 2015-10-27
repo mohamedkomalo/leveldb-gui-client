@@ -16,6 +16,11 @@ public class GeneratedMainWindow extends JFrame {
     protected JPanel body;
     private JPanel panel;
     protected JButton addRowButton;
+    private JPanel panel_1;
+    private JLabel lblKeyEncoding;
+    private JLabel label;
+    protected JComboBox<String> keyEncodingBox;
+    protected JComboBox<String> valueEncodingBox;
 
     public GeneratedMainWindow() {
         setTitle("Leveldb GUI Client");
@@ -46,12 +51,28 @@ public class GeneratedMainWindow extends JFrame {
         body.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), null));
 
         panel = new JPanel();
-        FlowLayout flowLayout = (FlowLayout) panel.getLayout();
-        flowLayout.setAlignment(FlowLayout.LEFT);
         body.add(panel, BorderLayout.NORTH);
+        panel.setLayout(new BorderLayout(0, 0));
 
         addRowButton = new JButton("Add");
-        panel.add(addRowButton);
+        panel.add(addRowButton, BorderLayout.WEST);
+        
+        panel_1 = new JPanel();
+        panel.add(panel_1, BorderLayout.EAST);
+        
+        label = new JLabel("key encoding");
+        panel_1.add(label);
+        
+        keyEncodingBox = new JComboBox();
+        keyEncodingBox.setPreferredSize(new Dimension(100, 20));
+        panel_1.add(keyEncodingBox);
+        
+        lblKeyEncoding = new JLabel("value encoding");
+        panel_1.add(lblKeyEncoding);
+        
+        valueEncodingBox = new JComboBox();
+        valueEncodingBox.setPreferredSize(new Dimension(100, 20));
+        panel_1.add(valueEncodingBox);
         JScrollPane scrollPane1 = new JScrollPane();
         body.add(scrollPane1, BorderLayout.CENTER);
         dbTable = new JTable();
