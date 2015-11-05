@@ -4,7 +4,7 @@ lazy val root = (project in file(".")).
   settings(
     name := "leveldb-gui-client",
     organization := "com.github.mohamedkomalo",
-    version := "0.1",
+    version := "0.2",
     scalaVersion := "2.11.7",
     crossPaths := false,
     javacOptions in (Compile, compile) := Seq("-target", "1.7", "-source", "1.7"),

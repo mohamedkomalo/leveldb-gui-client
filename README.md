@@ -4,7 +4,7 @@ A gui client for [leveldb](https://github.com/google/leveldb).
 
 ## Downloads
 Standalone jars can be found in [Releases](https://github.com/mohamedkomalo/leveldb-gui-client/releases) at the top.
-current version: v0.1.0
+current version: v0.2.0
 
 ## Getting Started
 
