@@ -7,13 +7,13 @@ import java.awt.*;
 /**
  * Created by Mohamed Kamal on 10/26/2015.
  */
-public class GeneratedRowWindow extends JDialog {
+public class KeyValueDialogGenerated extends JDialog {
 	protected JTextArea valueTextArea;
 	protected JTextArea keyTextArea;
 	protected JButton okButton;
 	protected JButton cancelButton;
 
-	public GeneratedRowWindow(JFrame owner) {
+	public KeyValueDialogGenerated(JFrame owner) {
 		super(owner, true);
 
 		setBounds(100, 100, 566, 414);

@@ -31,7 +31,7 @@ defaultInputFilter in Proguard := None
 
 options in Proguard ++= Seq("-dontoptimize", "-dontobfuscate", "-dontnote", "-dontwarn", "-ignorewarnings")
 
-options in Proguard += ProguardOptions.keepMain("com.github.mohamedkomalo.leveldbgui.MainWindow")
+options in Proguard += ProguardOptions.keepMain("com.github.mohamedkomalo.leveldbgui.*")
 
 lazy val standaloneJar = taskKey[Unit]("st")
 standaloneJar := {

@@ -6,23 +6,23 @@ import java.awt.*;
 /**
  * Created by Mohamed Kamal on 10/23/2015.
  */
-public class GeneratedMainWindow extends JFrame {
+public class LeveldbGuiClientWindowGenerated extends JFrame {
 
-    protected JPanel content;
+    public JPanel content;
     protected JButton browseButton;
     protected JTextField dbPathField;
     protected JTable dbTable;
     protected JPanel header;
     protected JPanel body;
     private JPanel panel;
-    protected JButton addRowButton;
+    protected JButton addKeyValueButton;
     private JPanel panel_1;
     private JLabel lblKeyEncoding;
     private JLabel label;
     protected JComboBox<String> keyEncodingBox;
     protected JComboBox<String> valueEncodingBox;
 
-    public GeneratedMainWindow() {
+    public LeveldbGuiClientWindowGenerated() {
         setTitle("Leveldb GUI Client");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 600, 400);
@@ -54,8 +54,8 @@ public class GeneratedMainWindow extends JFrame {
         body.add(panel, BorderLayout.NORTH);
         panel.setLayout(new BorderLayout(0, 0));
 
-        addRowButton = new JButton("Add");
-        panel.add(addRowButton, BorderLayout.WEST);
+        addKeyValueButton = new JButton("Add");
+        panel.add(addKeyValueButton, BorderLayout.WEST);
         
         panel_1 = new JPanel();
         panel.add(panel_1, BorderLayout.EAST);
