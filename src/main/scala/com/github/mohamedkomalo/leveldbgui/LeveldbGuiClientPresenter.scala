@@ -37,7 +37,7 @@ class LeveldbGuiClientPresenter(view: LeveldbGuiClientView) {
       levelDbView.selectedKeyValueIndex foreach { index =>
         val (key, value) = values(index)
         view
-          .showKeyValueDialog(keyCodec.decode(key), valueCodec.decode(value))
+          .showKeyValueDialog((keyCodec.decode(key), valueCodec.decode(value)), false)
           .foreach { case (key, value) => model.write(keyCodec.encode(key), valueCodec.encode(value)) }
       }
     }

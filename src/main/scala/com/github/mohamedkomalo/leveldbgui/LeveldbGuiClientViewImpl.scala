@@ -13,7 +13,9 @@ class LeveldbGuiClientViewImpl extends LeveldbGuiClientWindowGenerated with Leve
 
   browseButton onAction { event => onOpenDbRequested.fire() }
 
-  override def showKeyValueDialog(initialKeyValue: (String, String)) = new KeyValueDialog(initialKeyValue).showDialog
+  override def showKeyValueDialog(initialKeyValue: (String, String), keyEditable: Boolean = true) = {
+    new KeyValueDialog(initialKeyValue, keyEditable).showDialog
+  }
 
   override def showChooseFolderDialog(currentFolder: File) = {
     val fileChooser = new JFileChooser()
@@ -78,8 +80,10 @@ class LeveldbGuiClientViewImpl extends LeveldbGuiClientWindowGenerated with Leve
     }
   }
 
-  class KeyValueDialog(keyValueIn: (String, String) = ("", "")) extends KeyValueDialogGenerated(LeveldbGuiClientViewImpl.this) {
+  class KeyValueDialog(keyValueIn: (String, String) = ("", ""), keyEditable: Boolean) extends KeyValueDialogGenerated(LeveldbGuiClientViewImpl.this) {
     private var approved = false
+
+    keyTextArea.setEditable(keyEditable)
 
     keyValueIn match {
       case (key, value) =>
