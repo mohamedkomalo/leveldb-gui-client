@@ -10,6 +10,8 @@ import com.github.mohamedkomalo.util.SwingWrappers._
  * Created by Mohamed Kamal on 11/6/2015.
  */
 class LeveldbGuiClientViewImpl extends LeveldbGuiClientWindowGenerated with LeveldbGuiClientView {
+  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
+  SwingUtilities.updateComponentTreeUI(this)
 
   browseButton onAction { event => onOpenDbRequested.fire() }
 
@@ -28,7 +30,20 @@ class LeveldbGuiClientViewImpl extends LeveldbGuiClientWindowGenerated with Leve
     if (dialogResult == JFileChooser.APPROVE_OPTION) Option(fileChooser.getSelectedFile) else None
   }
 
-  override def showClient(): Unit = setVisible(true)
+  override def showErrorMessage(message: String): Unit = {
+    val textArea = new JTextArea(20, 80)
+    textArea.setEditable(false)
+    textArea.setText(message)
+    textArea.setFont(UIManager.getFont("TextField.font"))
+    textArea.setCaretPosition(0)
+    JOptionPane.showMessageDialog(this, new JScrollPane(textArea), "Error", JOptionPane.ERROR_MESSAGE)
+  }
+
+  override def showClient(): Unit = {
+    SwingUtilities invokeLater new Runnable() {
+      def run(): Unit = setVisible(true)
+    }
+  }
 
   override def leveldbView: LeveldbView = new LeveldbView {
 

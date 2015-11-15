@@ -1,6 +1,10 @@
 package com.github.mohamedkomalo.leveldbgui
+
+import java.io._
+import java.lang.Thread.UncaughtExceptionHandler
+
+import com.github.mohamedkomalo.util.ManagedResource._
 import com.github.mohamedkomalo.util.event.EventListener._
-import java.io.File
 
 /**
  * Created by Mohamed Kamal on 11/6/2015.
@@ -8,7 +12,24 @@ import java.io.File
 class LeveldbGuiClientPresenter(view: LeveldbGuiClientView) {
   private val leveldbPresenter = new LeveldbViewPresenter(view.leveldbView, new LeveldbModel)
 
-  def start() = view.showClient()
+  def start() = {
+    Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler {
+      override def uncaughtException(t: Thread, e: Throwable): Unit = {
+        try {
+          val writer = new StringWriter()
+          using(new PrintWriter(writer))(e.printStackTrace)
+
+          view.showErrorMessage("An error occured, please report the following stacktrace to github:\n\n" +
+            writer.getBuffer.toString)
+        }
+        catch {
+          case throwable: Throwable => throwable.printStackTrace()
+        }
+      }
+    })
+
+    view.showClient()
+  }
 
   listenTo(view.onOpenDbRequested) { event =>
     val currentFolder = leveldbPresenter.model.path.getOrElse(new File(""))
@@ -62,6 +83,8 @@ class LeveldbGuiClientPresenter(view: LeveldbGuiClientView) {
     }
 
     private def keyCodec: Codec = Codec(levelDbView.selectedKeyCodec)
+
     private def valueCodec: Codec = Codec(levelDbView.selectedValueCodec)
   }
+
 }

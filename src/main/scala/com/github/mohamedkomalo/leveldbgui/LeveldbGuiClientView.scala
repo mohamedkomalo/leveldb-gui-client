@@ -13,6 +13,7 @@ trait LeveldbGuiClientView {
 
   def showChooseFolderDialog(currentFolder: File): SelectedFolder
   def showKeyValueDialog(initialKeyValue: KeyValue = ("", ""), keyEditable: Boolean = true): Option[KeyValue]
+  def showErrorMessage(message: String)
 
   val onOpenDbRequested = new Event[Unit]
 
