@@ -55,4 +55,9 @@ class LeveldbModel {
     db foreach (_.put(key, value))
     onDbChanged.fire()
   }
+
+  def delete(key: Array[Byte]) = {
+    db foreach (_.delete(key))
+    onDbChanged.fire()
+  }
 }

@@ -42,6 +42,13 @@ class LeveldbGuiClientPresenter(view: LeveldbGuiClientView) {
       }
     }
 
+    listenTo(levelDbView.onDeletedSelectedKeyValueRequested) { event =>
+      levelDbView.selectedKeyValueIndex foreach { index =>
+        val (key, _) = values(index)
+        model.delete(key)
+      }
+    }
+
     listenTo(levelDbView.onAddKeyValueRequested) { event =>
       view.showKeyValueDialog().foreach { case (key, value) =>
         model.write(keyCodec.encode(key), valueCodec.encode(value))

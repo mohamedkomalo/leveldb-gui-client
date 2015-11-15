@@ -21,6 +21,8 @@ public class LeveldbGuiClientWindowGenerated extends JFrame {
     private JLabel label;
     protected JComboBox<String> keyEncodingBox;
     protected JComboBox<String> valueEncodingBox;
+    protected JButton deleteButton;
+    private JPanel panel_2;
 
     public LeveldbGuiClientWindowGenerated() {
         setTitle("Leveldb GUI Client");
@@ -54,22 +56,28 @@ public class LeveldbGuiClientWindowGenerated extends JFrame {
         body.add(panel, BorderLayout.NORTH);
         panel.setLayout(new BorderLayout(0, 0));
 
+        panel_2 = new JPanel();
+        panel.add(panel_2, BorderLayout.WEST);
+
         addKeyValueButton = new JButton("Add");
-        panel.add(addKeyValueButton, BorderLayout.WEST);
-        
+        panel_2.add(addKeyValueButton);
+
+        deleteButton = new JButton("Delete");
+        panel_2.add(deleteButton);
+
         panel_1 = new JPanel();
         panel.add(panel_1, BorderLayout.EAST);
-        
+
         label = new JLabel("key encoding");
         panel_1.add(label);
-        
+
         keyEncodingBox = new JComboBox();
         keyEncodingBox.setPreferredSize(new Dimension(100, 20));
         panel_1.add(keyEncodingBox);
-        
+
         lblKeyEncoding = new JLabel("value encoding");
         panel_1.add(lblKeyEncoding);
-        
+
         valueEncodingBox = new JComboBox();
         valueEncodingBox.setPreferredSize(new Dimension(100, 20));
         panel_1.add(valueEncodingBox);

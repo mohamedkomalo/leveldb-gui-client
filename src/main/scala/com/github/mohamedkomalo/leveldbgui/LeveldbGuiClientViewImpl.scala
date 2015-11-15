@@ -39,6 +39,7 @@ class LeveldbGuiClientViewImpl extends LeveldbGuiClientWindowGenerated with Leve
     }
 
     addKeyValueButton onAction { event => onAddKeyValueRequested.fire() }
+    deleteButton onAction { event => onDeletedSelectedKeyValueRequested.fire() }
 
     override def setCodecs(encodings: Seq[String]): Unit = {
       encodings.foreach { codecName =>

@@ -32,6 +32,7 @@ trait LeveldbGuiClientView {
 
     val onAddKeyValueRequested = new Event[Unit]
     val onEditSelectedKeyValueRequested = new Event[Unit]
+    val onDeletedSelectedKeyValueRequested = new Event[Unit]
     val onCloseDbRequested = new Event[Unit]
 
     val onSelectedKeyCodecChanged = new Event[Unit]
