@@ -93,6 +93,15 @@ class LeveldbGuiClientViewImpl extends LeveldbGuiClientWindowGenerated with Leve
       dbTable.revalidate()
       dbTable.repaint()
     }
+
+    override def keySearchText: String = keySearchTextField.getText
+
+    keySearchTextField onTextChanged { event => onKeySearchChanged.fire() }
+
+    override def setSelectedKeyValueIndex(indexOp: Option[Int]): Unit = indexOp match {
+      case Some(index) => dbTable.changeSelection(index, 0, false, false)
+      case None => dbTable.clearSelection()
+    }
   }
 
   class KeyValueDialog(keyValueIn: (String, String) = ("", ""), keyEditable: Boolean) extends KeyValueDialogGenerated(LeveldbGuiClientViewImpl.this) {

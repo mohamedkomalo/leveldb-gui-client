@@ -2,7 +2,8 @@ package com.github.mohamedkomalo.util
 
 import java.awt.{ItemSelectable, Component}
 import java.awt.event._
-import javax.swing.AbstractButton
+import javax.swing.event.{DocumentEvent, DocumentListener}
+import javax.swing.{JTextField, AbstractButton}
 
 /**
  * Created by Mohamed Kamal on 10/30/2015.
@@ -30,6 +31,17 @@ object SwingWrappers {
         override def mouseReleased(e: MouseEvent): Unit = {}
       })
     }
+  }
+
+  implicit class TextFieldScala(component: JTextField) {
+    def onTextChanged(func: DocumentEvent => Unit) = {
+      component.getDocument.addDocumentListener(new DocumentListener {
+        override def insertUpdate(e: DocumentEvent): Unit = func(e)
+        override def changedUpdate(e: DocumentEvent): Unit = func(e)
+        override def removeUpdate(e: DocumentEvent): Unit = func(e)
+      })
+    }
+
   }
 
   implicit class ItemSelectableScala(component: ItemSelectable) {

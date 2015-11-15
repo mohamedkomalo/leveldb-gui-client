@@ -30,6 +30,7 @@ trait LeveldbGuiClientView {
     def setDbFolder(dbFolder: String)
     def setKeysValues(keysValues: Seq[KeyValue])
     def selectedKeyValueIndex: Option[Int]
+    def setSelectedKeyValueIndex(indexOp: Option[Int]): Unit
 
     val onAddKeyValueRequested = new Event[Unit]
     val onEditSelectedKeyValueRequested = new Event[Unit]
@@ -38,6 +39,9 @@ trait LeveldbGuiClientView {
 
     val onSelectedKeyCodecChanged = new Event[Unit]
     val onSelectedValueCodecChanged = new Event[Unit]
+
+    def keySearchText: String
+    val onKeySearchChanged = new Event[Unit]
   }
 }
 

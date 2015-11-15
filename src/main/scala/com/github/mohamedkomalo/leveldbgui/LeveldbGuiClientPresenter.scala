@@ -6,6 +6,8 @@ import java.lang.Thread.UncaughtExceptionHandler
 import com.github.mohamedkomalo.util.ManagedResource._
 import com.github.mohamedkomalo.util.event.EventListener._
 
+import scala.util.Try
+
 /**
  * Created by Mohamed Kamal on 11/6/2015.
  */
@@ -73,6 +75,21 @@ class LeveldbGuiClientPresenter(view: LeveldbGuiClientView) {
     listenTo(levelDbView.onAddKeyValueRequested) { event =>
       view.showKeyValueDialog().foreach { case (key, value) =>
         model.write(keyCodec.encode(key), valueCodec.encode(value))
+      }
+    }
+
+    listenTo(levelDbView.onKeySearchChanged) { event =>
+      Try {
+        val searchText = levelDbView.keySearchText
+        val index = if(searchText.nonEmpty) {
+          val search = keyCodec.encode(searchText)
+          val found = values indexWhere { case (key, value) => key.startsWith(search) }
+          if(found == -1) None else Option(found)
+        }
+        else
+          None
+
+        levelDbView.setSelectedKeyValueIndex(index)
       }
     }
 
